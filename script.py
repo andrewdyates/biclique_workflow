@@ -13,7 +13,7 @@ from matrix_io import *
 import matrix_to_adjacency
 
 
-def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False, overwrite=True):
+def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False):
   threshold, support = float(threshold), float(support)
 
   # 1) Create work directory
@@ -24,8 +24,8 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
     print "Created Work directory %s." % (work_dir)
 
   # 2) Generate adjancency list and missing list
-  print "Loading dependency matrix %s..." % (npy_fname)
-  M = load(npy_fname)['M']
+  print "Loading dependency matrix %s..." % (depM_fname)
+  M = load(depM_fname)['M']
   empty_lines = []
   adj_iter = matrix_to_adjacency.npy_to_mafia(empty_lines, M=M, threshold=threshold, thresh_cmp=thresh_cmp, absvalue=absvalue)
   adj_fname, missing_fname = adj_list_fnames(depM_fname, work_dir, absvalue, thresh_cmp, threshold)
