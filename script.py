@@ -3,7 +3,7 @@
 
 EXAMPLE USE (in qsub script with 12 ppns and 1 node):
   
-  python $HOME/biclique_workflow/script.py depM_fname=/fs/lustre/osu6683/gse15745_nov2/dependency_dispatch/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values.pkl support=0.1 threshold=0.4 work_dir=/fs/lustre/osu6683/gse15745_bicliques thresh_cmp=greater
+  python $HOME/biclique_workflow/script.py depM_fname=/fs/lustre/osu6683/gse15745_nov2/dependency_dispatch/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values.pkl support=0.1 threshold=0.4 work_dir=/fs/lustre/osu6683/gse15745_nov2/bicliques thresh_cmp=greater
 """
 from __future__ import division
 from __init__ import *
@@ -26,13 +26,15 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   # 2) Generate adjancency list and missing list
   print "Loading dependency matrix %s..." % (depM_fname)
   M = load(depM_fname)['M']
+  print "Loaded matrix %s. Rows=%d, Cols=%d." % (os.path.basename(depM_fname), M.shape[0], M.shape[1])
   empty_lines = []
   adj_iter = matrix_to_adjacency.npy_to_mafia(empty_lines, M=M, threshold=threshold, thresh_cmp=thresh_cmp, absvalue=absvalue)
   adj_fname, missing_fname = adj_list_fnames(depM_fname, work_dir, absvalue, thresh_cmp, threshold)
   
   if os.path.exists(adj_fname) and os.path.exists(missing_fname):
     print "WARNING: %s and %s exist. Overwriting..." % (adj_fname, missing_fname)
-  fp_adj, fp_missing = open(adj_fname, "w"), open(missing_fname, "w")
+  fp_adj = open(adj_fname, "w")
+  fp_missing = open(missing_fname, "w")
   print "Opened files for writing:\nadj_matrix: %s\nmissing_row_list: %s" % (adj_fname, missing_fname)
 
   n_lines = 0
@@ -44,18 +46,19 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
     row = line.split(' ')
     n_edges += len(row)
     for x in row: col_set.add(x)
-    fp_adj.close()
-    fp_missing.write("\n".join(map(str, empty_lines)))
-    fp_missing.close()
-    n_missing = len(empty_lines)
-    n_all_edges = np.size(M.ravel())
-    edge_density = n_edges / n_all_edges
-    n_max_edges = len(col_set) * n_lines
+  fp_adj.close()
+  fp_missing.write("\n".join(map(str, empty_lines)))
+  fp_missing.close()
+  n_missing = len(empty_lines)
+  n_all_edges = np.size(M.ravel())
+  edge_density = n_edges / n_all_edges
+  n_max_edges = len(col_set) * n_lines
 
-  print "Wrote %d adjacency lines, %d missing lines. (row coverage %.4f%%)" % (n_lines, n_missing, n_lines/np.size(M,1)*100)
-  print "Total: %d lines. Expected total %d lines." % (n_lines+n_missing, np.size(M,0))
-  print "Wrote %d edges of %d total edges. (%.6f%%)" % (n_edges, n_all_edges, edge_density*100)
+  print "Wrote %d adjacency lines, %d missing lines. (row coverage %.4f%%)" % (n_lines, n_missing, n_lines/np.size(M,0)*100)
   print "%d of %d columns included. (col coverage %.4f%%)" % (len(col_set), np.size(M,1), len(col_set)/np.size(M,1)*100)
+  print "SUM CHECK: Total: %d lines. Expected total %d lines. OK=%s" % (n_lines+n_missing, np.size(M,0), n_lines+n_missing == np.size(M,0))
+  print "Wrote %d edges of %d all adj matrix entries. (%.6f%%)" % (n_edges, n_all_edges, edge_density*100)
+
 
   # average node degree statistics...
   avg_inc_row_degree = n_edges / n_lines
@@ -65,11 +68,11 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   avg_inc_degree = n_edges*2 / (len(col_set) + n_lines)
   max_avg_inc_degree = n_max_edges*2 / (len(col_set) + n_lines)
   
-  print "Average (included) row degree: %.2f. Max: %.2f (%.4f%%)" % \
+  print "Average (included) row degree: %.2f. Max: %.2f (%.4f%% of max)" % \
       (avg_inc_row_degree, max_avg_inc_row_degree, avg_inc_row_degree/max_avg_inc_row_degree*100)
-  print "Average (included) col degree: %.2f. Max: %.2f (%.4f%%)" % \
+  print "Average (included) col degree: %.2f. Max: %.2f (%.4f%% of max)" % \
       (avg_inc_col_degree, max_avg_inc_col_degree, avg_inc_col_degree/max_avg_inc_col_degree*100)
-  print "Average (included) all node degree: %.2f. Max %.2f. (%.4f%%)" % (avg_inc_degree, max_avg_inc_degree, avg_inc_degree/max_avg_inc_degree*100)
+  print "Average (included) all node degree: %.2f. Max %.2f. (%.4f%% of max)" % (avg_inc_degree, max_avg_inc_degree, avg_inc_degree/max_avg_inc_degree*100)
   print "===================="
   print "Adjacency graph generation complete!"
   print "===================="

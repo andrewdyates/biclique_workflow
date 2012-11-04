@@ -11,4 +11,5 @@ cd $HOME
 source $HOME/.bash_profile
 echo "PBS_JOBID: $PBS_JOBID"
 
-python $HOME/biclique_workflow/script.py depM_fname=/fs/lustre/osu6683/gse15745_nov2/dependency_dispatch/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values.pkl support=0.1 threshold=0.4 work_dir=/fs/lustre/osu6683/gse15745_bicliques thresh_cmp=greater
+
+python $HOME/biclique_workflow/script.py depM_fname=/fs/lustre/osu6683/gse15745_nov2/dependency_dispatch/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values.pkl support=0.1 threshold=0.4 work_dir=/fs/lustre/osu6683/gse15745_nov2/bicliques thresh_cmp=greater
