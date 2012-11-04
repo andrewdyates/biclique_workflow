@@ -1,8 +1,9 @@
 #!/usr/bin/python
 """Mine bicliques from a rectangular dependency matrix.
 
-EXAMPLE USE:
-  python $HOME/biclique_workflow/test.py depM_fname=$HOME/gse15745/gse15745_gpl6104_gpl8490_spearman.values.npy support=20.0 threshold=0.6 work_dir=/fs/lustre/osu6683/gse15745_bicliques thresh_cmp=greater 
+EXAMPLE USE (in qsub script with 12 ppns and 1 node):
+  
+  python $HOME/biclique_workflow/script.py depM_fname=/fs/lustre/osu6683/gse15745_nov2/dependency_dispatch/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values.pkl support=0.1 threshold=0.4 work_dir=/fs/lustre/osu6683/gse15745_bicliques thresh_cmp=greater
 """
 from __future__ import division
 from __init__ import *

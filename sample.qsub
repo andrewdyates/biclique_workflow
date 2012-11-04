@@ -1,0 +1,14 @@
+#PBS -N test_biclique_workflow
+#PBS -l nodes=1:ppn=12
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -l walltime=2:00:00
+
+#tdate=$(date +%%T)
+
+set -x
+cd $HOME
+source $HOME/.bash_profile
+echo "PBS_JOBID: $PBS_JOBID"
+
+python $HOME/biclique_workflow/script.py depM_fname=/fs/lustre/osu6683/gse15745_nov2/dependency_dispatch/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values.pkl support=0.1 threshold=0.4 work_dir=/fs/lustre/osu6683/gse15745_bicliques thresh_cmp=greater
