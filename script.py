@@ -13,8 +13,10 @@ from matrix_io import *
 import matrix_to_adjacency
 
 
-def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False):
+def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False, add_mpiexec=False):
   threshold, support = float(threshold), float(support)
+  if add_mpiexec in ('F', 'f', 'false', 'False', 'FALSE', 'None'):
+    add_mpiexec = False
 
   # 1) Create work directory
   if os.path.exists(work_dir):
@@ -77,16 +79,14 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   print "Adjacency graph generation complete!"
   print "===================="
   
-  # 3) Change working directory to MAFIA-MBC
-  print "cd to %s" % PATHS["MAFIA-MBC"]
-  os.chdir(PATHS["MAFIA-MBC"])
-  
-  # 4) Call MBC on adjancency list
+  # 3) Call MBC on adjancency list
   print "Calling MAFIA-MBC/MBC on %s with support %f%%..." % (adj_fname, support)
   #  (this will automatically call mafia, create freq_itemsets dir, and create fmi file.)
-  biclique_fname = call_mbc(adj_fname=adj_fname, support_percent=support)
+  biclique_fname = call_mbc(adj_fname=adj_fname, support_percent=support, add_mpiexec=add_mpiexec)
   print "MBC biclique fname:", biclique_fname
   print "to be continued with density merging..."
+
+  
   # 6) Density merge maximal bicliques
   # 6.2) If a text-representation of npy_fname does not yet exist, create it
   #matrix_text_path = os.path.join(work_dir, os.path.basename(npy_fname)+".txt")

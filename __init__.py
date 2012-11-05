@@ -39,7 +39,7 @@ def adj_list_fnames(npy_fname, work_dir, absvalue, thresh_cmp, threshold):
   missing_fname = os.path.join(work_dir, prefix+".missing")
   return adj_fname, missing_fname
 
-def call_mbc(support_percent=5, adj_fname=None, add_time=True, add_mpiexec=True, npernode=12, verbose=True):
+def call_mbc(support_percent=5, adj_fname=None, add_time=True, add_mpiexec=True, verbose=True):
   """Note: requires .mafia file in ./freq_itemsets/ dir. Support in %, not decimal.
   Calling this without an expected .mafia file will generate it automatically.
   
@@ -62,7 +62,7 @@ def call_mbc(support_percent=5, adj_fname=None, add_time=True, add_mpiexec=True,
   if add_time:
     cmd = "/usr/bin/time %s" % cmd
   if add_mpiexec:
-    cmd = "mpiexec -npernode %s" % (npernode, cmd)
+    cmd = "mpiexec -npernode 1 %s" % (cmd)
   if verbose:
     print "MBC command to call via subprocess: %s" % cmd
   p = subprocess.call(cmd, shell=True)
