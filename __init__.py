@@ -60,9 +60,9 @@ def call_mbc(support_percent=5, adj_fname=None, add_time=True, add_mpiexec=True,
   cmd = MBC_CMD % {
     'exe': PATHS['MBC'], 'support': support_percent, 'out_fname': out_fname, 'adj_fname': adj_fname}
   if add_time:
-    cmd = "time %s" % cmd
+    cmd = "/usr/bin/time %s" % cmd
   if add_mpiexec:
-    cmd = "mpiexec -npernode %d %s" % (npernode, cmd)
+    cmd = "mpiexec -npernode %s" % (npernode, cmd)
   if verbose:
     print "MBC command to call via subprocess: %s" % cmd
   p = subprocess.call(cmd, shell=True)
