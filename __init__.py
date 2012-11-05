@@ -52,7 +52,10 @@ def call_mbc(support_percent=5, adj_fname=None, add_time=True, add_mpiexec=True,
   support_percent = float(support_percent)
   assert support_percent > 0 and support_percent <= 100 
   # change to MAFIA path
+  curr_dir = os.getcwd()
   os.chdir(PATHS['MAFIA-MBC'])
+  if verbose:
+    print "Changed cwd from %s to %s" % (curr_dir, PATHS['MAFIA-MBC'])
   out_fname = mbc_output_name(adj_fname, support_percent)
   cmd = MBC_CMD % {
     'exe': PATHS['MBC'], 'support': support_percent, 'out_fname': out_fname, 'adj_fname': adj_fname}
@@ -63,9 +66,11 @@ def call_mbc(support_percent=5, adj_fname=None, add_time=True, add_mpiexec=True,
   if verbose:
     print "MBC command to call via subprocess: %s" % cmd
   p = subprocess.call(cmd, shell=True)
+  os.chdir(curr_dir)
   if verbose:
     print "---SUBPROCESS CALL OUTPUT---"
     print p
+    print "Changed back to original directory %s" % (curr_dir)
   return out_fname
 
 def mbc_output_name(adj_fname, support):
