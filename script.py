@@ -100,12 +100,22 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   # 4) Density merge maximal bicliques
   # If a text-representation of npy_fname does not yet exist, create it
   matrix_text_fname = os.path.join(work_dir, os.path.basename(depM_fname).rpartition('.')[0]+".tab")
-  if not os.path.exists(matrix_text_fname):
+  # SOMETHING HERE IS WRONG BECAUSE MATRIX IS BLANK
+  if not os.path.exists(matrix_text_fname) or overwrite:
+    if os.path.exists(matrix_text_fname):
+      print "WARNING: %s exists. Overwriting..." % matrix_text_fname
     print "Saving dependency matrix as text to %s..." % matrix_text_fname
     save(M, open(matrix_text_fname, "w"), ftype="txt")
     print "Saved %s." % matrix_text_fname
   else:
     print "%s already exists. Do not resave." % (matrix_text_fname)
+  # check for blank text matrix bug
+  if open(matrix_text_fname).next().strip() == "":
+    print "ERROR: %s is blank! Try to resave..." % matrix_text_fname 
+    save(M, open(matrix_text_fname, "w"), ftype="txt")
+    if open(matrix_text_fname).next().strip() == "":
+      print "CRITICAL: %s is still blank after rewrite. Debug this problem before proceding." % matrix_text_fname
+      sys.exit(1)
 
   # 4.1) Remap row numbers back to original matrix size (column numbers are never remapped)
   remapped_fname = preprocess_biclique_name(biclique_fname)
