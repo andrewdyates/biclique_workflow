@@ -1,11 +1,10 @@
-"""Execute
-
+"""
 WARNING: TOO LOW OF SUPPORT WILL CRASH MBC!
 """
 import numpy as np
 import os, errno
 from matrix_to_adjacency import *
-#from mafia_bicliques import *
+from mafia_bicliques import *
 import subprocess
 
 
@@ -39,7 +38,7 @@ def adj_list_fnames(npy_fname, work_dir, absvalue, thresh_cmp, threshold):
   missing_fname = os.path.join(work_dir, prefix+".missing")
   return adj_fname, missing_fname
 
-def call_mbc(support_percent=5, adj_fname=None, add_time=True, add_mpiexec=True, verbose=True):
+def call_mbc(support_percent=5, adj_fname=None, add_time=True, add_mpiexec=False, verbose=True):
   """Note: requires .mafia file in ./freq_itemsets/ dir. Support in %, not decimal.
   Calling this without an expected .mafia file will generate it automatically.
   
@@ -76,9 +75,72 @@ def call_mbc(support_percent=5, adj_fname=None, add_time=True, add_mpiexec=True,
 def mbc_output_name(adj_fname, support):
   return adj_fname.rpartition('.')[0] + "%.3f_sup.biclique" % (support)
 
+def preprocess_biclique_name(biclique_fname):
+  return biclique_fname + ".rowmapped"
+
 def make_dir(outdir):
   try:
     os.makedirs(outdir)
   except OSError, e:
     if e.errno != errno.EEXIST: raise
   return outdir
+
+def write_preprocess_biclique(n_rows=None, biclique_fname=None, missing_fname=None):
+  n_rows = int(n_rows)
+  assert n_rows > 0
+  assert os.path.exists(biclique_fname)
+  out_fname = preprocess_biclique_name(biclique_fname)
+  if os.path.exists(out_fname):
+    print "WARNING: target output file exists, will overwrite: %s" % (out_fname)
+
+  missing_set = get_missing_set(open(missing_fname))
+  print "Loaded %d missing row IDs from %s." % (len(missing_set), missing_fname)
+
+  print "Loading %s..." % biclique_fname
+  g = MafiaBiclique(fp=open(biclique_fname), missing_rows=missing_set, n=n_rows)
+  print "Loaded raw MAFIA biclique from %s." % (biclique_fname)
+  print "%d rows, %d cols covered in %d bicliques" % (len(g.row_set), len(g.col_set), len(g.bicliques))
+  print "Row check: (%d + %d) == %d == %d?" % (len(g.row_set), len(g.missing_rows), \
+                                    len(g.row_set)+len(g.missing_rows), n_rows)
+  print "Writing remapped biclique for 'GraphMining' consumption at %s." % (out_fname)
+  fp_out = open(out_fname, "w")
+  n_lines_written = 0
+  for line in g.yield_lines_to_density_merger():
+    fp_out.write(line)
+    n_lines_written += 1
+  fp_out.close()
+  print "Wrote %d lines to %s." % (n_lines_written, out_fname)
+  return out_fname
+
+def graphmining_name(biclique_fname, density, merge_type):
+  return biclique_fname + ".%.3f_mergetype%d_graphmined.output" % (density, merge_type)
+
+def call_graphmining(density, graph_fname, biclique_fname, merge_type=1, add_time=True, add_mpiexec=False):
+  density = float(density)
+  merge_type = int(merge_type)
+  assert os.path.exists(PATHS["GraphMining"])
+  assert os.path.exists(biclique_fname)
+  assert os.path.exists(graph_fname)
+  assert merge_type in (0,1)
+
+  out_fname = graphmining_name(biclique_fname, density, merge_type)
+  if os.path.exists(out_fname):
+    print "WARNING: target output file exists, will overwrite: %s" % out_fname
+
+  assert density > 0 and density <= 1
+  cmd = GRAPH_MINING_CMD % {
+    'exe': PATHS["GraphMining"],
+    'density': density,
+    'out_fname': out_fname,
+    'graph_fname': graph_fname,
+    'biclique_fname': biclique_fname,
+    'merge_type': merge_type,
+    }
+  if add_time:
+    cmd = "/usr/bin/time %s" % cmd
+  if add_mpiexec:
+    cmd = "mpiexec -npernode 1 %s" % (cmd)
+  print cmd
+  p = subprocess.call(cmd, shell=True)
+  print p
+  return out_fname

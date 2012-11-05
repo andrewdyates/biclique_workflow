@@ -4,3 +4,6 @@
 [submodule "matrix_to_adjacency"]
 	path = matrix_to_adjacency
 	url = git@github.com:andrewdyates/matrix_to_adjacency.git
+[submodule "mafia_bicliques"]
+	path = mafia_bicliques
+	url = git@github.com:andrewdyates/mafia_bicliques.git
