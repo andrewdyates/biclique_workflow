@@ -3,7 +3,7 @@
 
 EXAMPLE USE (in qsub script with 12 ppns and 1 node):
   
-  python $HOME/biclique_workflow/script.py depM_fname=/fs/lustre/osu6683/gse15745_nov2/dependency_dispatch/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values.pkl support=0.1 threshold=0.4 work_dir=/fs/lustre/osu6683/gse15745_nov2/bicliques thresh_cmp=greater
+  python $HOME/biclique_workflow/script.py depM_fname=/fs/lustre/osu6683/gse15745_nov2/dependency_dispatch/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values.pkl support=0.1 threshold=0.5 work_dir=/fs/lustre/osu6683/gse15745_nov2/bicliques thresh_cmp=greater
 """
 from __future__ import division
 from __init__ import *
@@ -86,7 +86,7 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   #  (this will automatically call mafia, create freq_itemsets dir, and create fmi file.)
   biclique_fname = call_mbc(adj_fname=adj_fname, support_percent=support)
   print "MBC biclique fname:", biclique_fname
-  print "to be continued..."
+  print "to be continued with density merging..."
   # 6) Density merge maximal bicliques
   # 6.2) If a text-representation of npy_fname does not yet exist, create it
   #matrix_text_path = os.path.join(work_dir, os.path.basename(npy_fname)+".txt")
