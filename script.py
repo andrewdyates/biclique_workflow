@@ -96,12 +96,10 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
     print "Calling MAFIA-MBC/MBC on %s with support %f%%..." % (adj_fname, support)
     #  (this will automatically call mafia, create freq_itemsets dir, and create fmi file.)
     call_mbc(adj_fname=adj_fname, support_percent=support, add_mpiexec=add_mpiexec)
-  print "to be continued with density merging..."
-
   
   # 4) Density merge maximal bicliques
   # If a text-representation of npy_fname does not yet exist, create it
-  matrix_text_fname = os.path.join(work_dir, os.path.basename(depM_fname).rparition('.')[0]+".tab")
+  matrix_text_fname = os.path.join(work_dir, os.path.basename(depM_fname).rpartition('.')[0]+".tab")
   if not os.path.exists(matrix_text_fname):
     print "Saving dependency matrix as text to %s..." % matrix_text_fname
     save(M, open(matrix_text_fname, "w"), ftype="txt")
