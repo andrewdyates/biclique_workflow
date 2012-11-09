@@ -13,7 +13,7 @@ from matrix_io import *
 import matrix_to_adjacency
 
 
-def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False, add_mpiexec=False, overwrite=False, density=0.7, merge_type=1, extract_cols=None, extract_rows=None):
+def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False, add_mpiexec=False, overwrite=False, density=0.7, merge_type=1, extract_rows=None, extract_cols=None):
   threshold, support = float(threshold), float(support)
   if add_mpiexec in ('F', 'f', 'false', 'False', 'FALSE', 'None'):
     add_mpiexec = False
@@ -33,6 +33,22 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   print "Loading dependency matrix %s..." % (depM_fname)
   M = load(depM_fname)['M']
   print "Loaded matrix %s. Rows=%d, Cols=%d." % (os.path.basename(depM_fname), M.shape[0], M.shape[1])
+
+  # 2.2) Handle row and column extractions
+  if extract_rows or extract_cols:
+    print "Preshape:", M.shape
+    if isinstance(extract_rows, basestring):
+      extract_rows = extract_rows.split(',')
+    if isinstance(extract_cols, basestring):
+      extract_cols = extract_cols.split(',')
+    if extract_rows:
+      print "extract_rows(%d):" % len(extract_rows), extract_rows
+      M = np.delete(M, extract_rows, 0)
+    if extract_cols:
+      print "extract_cols(%d):" % len(extract_cols), extract_cols
+      M = np.delete(M, extract_cols, 1)
+    print "Postshape:", M.shape
+      
   empty_lines = []
   adj_iter = matrix_to_adjacency.npy_to_mafia(empty_lines, M=M, threshold=threshold, thresh_cmp=thresh_cmp, absvalue=absvalue)
   adj_fname, missing_fname = adj_list_fnames(depM_fname, work_dir, absvalue, thresh_cmp, threshold)
