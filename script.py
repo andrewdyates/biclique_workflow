@@ -35,6 +35,7 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   print "Loaded matrix %s. Rows=%d, Cols=%d." % (os.path.basename(depM_fname), M.shape[0], M.shape[1])
 
   # 2.2) Handle row and column extractions
+  row_filt_n, col_filt_n = 0, 0
   if extract_rows or extract_cols:
     print "Preshape:", M.shape
     if isinstance(extract_rows, basestring):
@@ -44,9 +45,11 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
     if extract_rows:
       print "extract_rows(%d):" % len(extract_rows), extract_rows
       M = np.delete(M, extract_rows, 0)
+      row_filt_n = len(extract_rows)
     if extract_cols:
       print "extract_cols(%d):" % len(extract_cols), extract_cols
       M = np.delete(M, extract_cols, 1)
+      col_filt_n = len(extract_rows)
     print "Postshape:", M.shape
       
   empty_lines = []
@@ -114,7 +117,9 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   
   # 4) Density merge maximal bicliques
   # If a text-representation of npy_fname does not yet exist, create it
-  matrix_text_fname = os.path.join(work_dir, os.path.basename(depM_fname).rpartition('.')[0]+".tab")
+
+  bfname = os.path.basename(depM_fname).rpartition('.')[0]
+  matrix_text_fname = os.path.join(work_dir, "%s.rfilt%d.cfilt%d.tab" % (bfname, len(row_filt_n), len(col_filt_n)))
   # SOMETHING HERE IS WRONG BECAUSE MATRIX IS BLANK
   if not os.path.exists(matrix_text_fname) or overwrite:
     if os.path.exists(matrix_text_fname):
