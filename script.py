@@ -11,10 +11,9 @@ import sys
 import numpy as np
 from matrix_io import *
 import matrix_to_adjacency
-#import mafia_bicliques
 
 
-def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False, add_mpiexec=False, overwrite=False, density=0.7, merge_type=1):
+def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False, add_mpiexec=False, overwrite=False, density=0.7, merge_type=1, extract_cols=None, extract_rows=None):
   threshold, support = float(threshold), float(support)
   if add_mpiexec in ('F', 'f', 'false', 'False', 'FALSE', 'None'):
     add_mpiexec = False
