@@ -115,6 +115,9 @@ def write_preprocess_biclique(n_rows=None, biclique_fname=None, missing_fname=No
 def graphmining_name(biclique_fname, density, merge_type):
   return biclique_fname + ".%.3f_mergetype%d_graphmined.output" % (density, merge_type)
 
+def remapped_name(graphmining_fname, nrows=0, ncols=0):
+  return graphmining_fname + ".%d.%d.remapout" % (nrows, ncols)
+
 def call_graphmining(density, graph_fname, biclique_fname, merge_type=1, add_time=True, add_mpiexec=False):
   density = float(density)
   merge_type = int(merge_type)
@@ -144,3 +147,51 @@ def call_graphmining(density, graph_fname, biclique_fname, merge_type=1, add_tim
   p = subprocess.call(cmd, shell=True)
   print p
   return out_fname
+
+
+def get_remap(n_all, missing_list, start=1):
+  """Return dict of int to int index remapping."""
+  if not missing_list:
+    return None
+  s = sorted(missing_list)
+  listmap = {}
+  ii = 0
+  for i in xrange(start, n_all-len(missing_list)+start):
+    while ii < len(s) and s[ii] == i+ii:
+      ii += 1
+    listmap[i] = i + ii
+  return listmap
+
+              
+def remap_graphmining_out(merged_fp, remap_fp, n_all_row, n_all_col, extract_rows, extract_cols, start=1):
+  rowmap = get_remap(n_all_row, extract_rows)
+  colmap = get_remap(n_all_col, extract_cols)
+  for line in merged_fp:
+    row_s, col_s, density_s = line.split(' ; ')
+    row_idx = []
+    for s in row_s.split(' '):
+      i = int(s)
+      if i-start >= n_all_row:
+        break
+      if rowmap:
+        row_idx.append(str(rowmap[i]))
+      else:
+        row_idx.append(str(i))
+    col_idx = []
+    for s in col_s.split(' '):
+      i = int(s)
+      if i-start >= n_all_col:
+        break
+      if colmap:
+        col_idx.append(str(colmap[i]))
+      else:
+        col_idx.append(str(i))
+    remap_fp.write(' '.join(row_idx))
+    remap_fp.write(' ; ')
+    remap_fp.write(' '.join(col_idx))
+    remap_fp.write(' ; ')
+    remap_fp.write(density_s)
+    
+    
+
+  

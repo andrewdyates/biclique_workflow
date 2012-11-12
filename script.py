@@ -159,7 +159,11 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   else:
     print "GraphMining output file %s already exists. Do not overwrite." % (merged_fname)
 
-  
+  # 5) Map back any extracted rows or columns
+  if extract_rows or extract_cols:
+    remap_fname = remapped_name(merged_fname, row_filt_n, col_filt_n)
+    print "Remapping %s to %s by reinserting extracted rows and columns" % (merged_fname, remap_fname)
+    remap_graphmining_out(open(merged_fname), open(remap_fname,'w'), n_all_row, n_all_col, extract_rows, extract_cols)
 
   
 
