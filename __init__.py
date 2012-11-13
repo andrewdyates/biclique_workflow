@@ -161,7 +161,9 @@ def get_remap(n_all, missing_list, start=1):
     print "WARNING: not all entries in `missing_list` are unique as expected! %d != %d" % (len(missing_list),n)
   listmap = {}
   ii = 0
-  for i in xrange(start, n_all-len(missing_list)+start):
+  # We don't care about overrunning the upper bound of the map.
+  # for i in xrange(start, n_all-len(missing_list)+start):
+  for i in xrange(start, n_all+1):
     while ii < len(missing_list) and missing_list[ii] == i+ii:
       ii += 1
     listmap[i] = i + ii
