@@ -155,7 +155,10 @@ def get_remap(n_all, missing_list, start=1):
     return None
   if not isinstance(missing_list[0], int):
     missing_list = [int(s) for s in missing_list]
-  missing_list = sorted(missing_list)
+  n = len(missing_list)
+  missing_list = sorted(set(missing_list))
+  if len(missing_list) != n:
+    print "WARNING: not all entries in `missing_list` are unique as expected! %d != %d" % (len(missing_list),n)
   listmap = {}
   ii = 0
   for i in xrange(start, n_all-len(missing_list)+start):
