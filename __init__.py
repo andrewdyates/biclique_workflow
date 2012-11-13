@@ -153,16 +153,17 @@ def get_remap(n_all, missing_list, start=1):
   """Return dict of int to int index remapping."""
   if not missing_list:
     return None
-  s = sorted(missing_list)
+  if not isinstance(missing_list[0], int):
+    missing_list = [int(s) for s in missing_list]
+  missing_list = sorted(missing_list)
   listmap = {}
   ii = 0
   for i in xrange(start, n_all-len(missing_list)+start):
-    while ii < len(s) and s[ii] == i+ii:
+    while ii < len(missing_list) and missing_list[ii] == i+ii:
       ii += 1
     listmap[i] = i + ii
   return listmap
 
-              
 def remap_graphmining_out(merged_fp, remap_fp, n_all_row, n_all_col, extract_rows, extract_cols, start=1):
   rowmap = get_remap(n_all_row, extract_rows)
   colmap = get_remap(n_all_col, extract_cols)

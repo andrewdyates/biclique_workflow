@@ -41,9 +41,9 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   if extract_rows or extract_cols:
     print "Preshape:", M.shape
     if isinstance(extract_rows, basestring):
-      extract_rows = extract_rows.split(',')
+      extract_rows = [int(s)-1 for s in extract_rows.split(',')]
     if isinstance(extract_cols, basestring):
-      extract_cols = extract_cols.split(',')
+      extract_cols = [int(s)-1 for s in extract_cols.split(',')]
     if extract_rows:
       print "extract_rows(%d):" % len(extract_rows), extract_rows
       M = np.delete(M, extract_rows, 0)

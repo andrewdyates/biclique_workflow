@@ -3,6 +3,8 @@
 *~
 \#*
 \.\#*
+.RData
+.RHistory
 
 # Packages
 *.egg
