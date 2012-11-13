@@ -15,7 +15,7 @@ from matrix_io import *
 import matrix_to_adjacency
 
 
-def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False, add_mpiexec=False, overwrite=False, density=0.7, merge_type=1, extract_rows=None, extract_cols=None, kill=False):
+def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh_cmp="greater", absvalue=False, add_mpiexec=False, overwrite=False, density=0.7, merge_type=1, extract_rows=None, extract_cols=None):
   threshold, support = float(threshold), float(support)
   if add_mpiexec in ('F', 'f', 'false', 'False', 'FALSE', 'None'):
     add_mpiexec = False
@@ -34,6 +34,7 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   # 2) Generate adjancency list and missing list
   print "Loading dependency matrix %s..." % (depM_fname)
   M = load(depM_fname)['M']
+  n_all_row, n_all_col = M.shape
   print "Loaded matrix %s. Rows=%d, Cols=%d." % (os.path.basename(depM_fname), M.shape[0], M.shape[1])
 
   # 2.2) Handle row and column extractions
@@ -164,7 +165,7 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
     remap_fname = remapped_name(merged_fname, row_filt_n, col_filt_n)
     print "Remapping %s to %s by reinserting extracted rows and columns" % (merged_fname, remap_fname)
     remap_graphmining_out(open(merged_fname), open(remap_fname,'w'), n_all_row, n_all_col, extract_rows, extract_cols)
-
+  print "Biclique mining complete."
   
 
 if __name__ == "__main__":
