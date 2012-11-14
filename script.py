@@ -42,20 +42,22 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   print "Loaded matrix %s. Rows=%d, Cols=%d." % (os.path.basename(depM_fname), M.shape[0], M.shape[1])
 
   # 2.2) Handle row and column extractions
+  # WARNING: numpy indexes from 0, but MAFIA-MBC and R index from 1.
+  # Only convert indices to 0-based for numpy matrix deletion!
   row_filt_n, col_filt_n = 0, 0
   if extract_rows or extract_cols:
     print "Preshape:", M.shape
     if isinstance(extract_rows, basestring):
-      extract_rows = [int(s)-1 for s in extract_rows.split(',')]
+      extract_rows = [int(s) for s in extract_rows.split(',')]
     if isinstance(extract_cols, basestring):
-      extract_cols = [int(s)-1 for s in extract_cols.split(',')]
+      extract_cols = [int(s) for s in extract_cols.split(',')]
     if extract_rows:
       print "extract_rows(%d):" % len(extract_rows), extract_rows
-      M = np.delete(M, extract_rows, 0)
+      M = np.delete(M, [x-1 for x in extract_rows], 0)
       row_filt_n = len(extract_rows)
     if extract_cols:
       print "extract_cols(%d):" % len(extract_cols), extract_cols
-      M = np.delete(M, extract_cols, 1)
+      M = np.delete(M, [x-1 for x in extract_cols], 1)
       col_filt_n = len(extract_cols)
     print "Postshape:", M.shape
       
