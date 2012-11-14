@@ -22,6 +22,7 @@ def main(fname, overlap=.50):
         cols[i] = cols[i] | cols[j]
         overlaps.add(j)
 
+  print "# Generated from %s" % fname
   print "# %d to %d bicliques, overlap by %f" % (n, len(merged), overlap)
   for i, x in enumerate(merged):
     print "bc%d.row<-c(%s)" % (i, ",".join(sorted(rows[x])))
