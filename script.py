@@ -129,7 +129,6 @@ def workflow(depM_fname=None, work_dir=None, support=10.0, threshold=0.6, thresh
   bfname = os.path.basename(depM_fname).rpartition('.')[0]
   matrix_text_fname = os.path.join(work_dir, "%s.rfilt%d.cfilt%d.tab" % (bfname, row_filt_n, col_filt_n))
   print "Density merge matrix input: matrix_text_fname: %s" % matrix_text_fname
-  # SOMETHING HERE IS WRONG BECAUSE MATRIX IS BLANK
   if not os.path.exists(matrix_text_fname) or overwrite:
     if os.path.exists(matrix_text_fname):
       print "WARNING: %s exists. Overwriting..." % matrix_text_fname
