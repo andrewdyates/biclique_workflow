@@ -34,11 +34,11 @@ GRAPH_MINING_CMD = "%(exe)s -g 2 -d %(density).4f -m %(merge_type)d -p %(out_fna
 
 THIS_DIR = os.path.abspath(os.path.dirname(__file__))
 PATHS = {
-  "GraphMining": os.path.join(THIS_DIR, "MergeNetPackage/SumNetwork/bin/GraphMining"),
-#  "GraphVis": os.path.join(THIS_DIR, "MergeNetPackage/SumNetwork/bin/GraphVis"),
-  "mafia": os.path.join(THIS_DIR, "MergeNetPackage/MAFIA-MBC/bin/mafia"),
-  "MBC": os.path.join(THIS_DIR, "MergeNetPackage/MAFIA-MBC/bin/MBC"),
-  "MAFIA-MBC": os.path.join(THIS_DIR, "MergeNetPackage/MAFIA-MBC"),
+  "GraphMining": os.path.join(THIS_DIR, "MergeNetworkPatterns/SumNetwork/bin/GraphMining"),
+#  "GraphVis": os.path.join(THIS_DIR, "MergeNetworkPatterns/SumNetwork/bin/GraphVis"),
+  "mafia": os.path.join(THIS_DIR, "MergeNetworkPatterns/MAFIA-MBC/bin/mafia"),
+  "MBC": os.path.join(THIS_DIR, "MergeNetworkPatterns/MAFIA-MBC/bin/MBC"),
+  "MAFIA-MBC": os.path.join(THIS_DIR, "MergeNetworkPatterns/MAFIA-MBC"),
 }
 
 def adj_list_fnames(npy_fname, work_dir, absvalue, thresh_cmp, threshold):
