@@ -7,7 +7,13 @@ python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=/nfs/01/osu
 
 python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass6i3/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.630+_adj0.500_sup.biclique.rowmapped.0.380_mergetype1_graphmined.output.1380.532.remapout k=6 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique6.R
 
-python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass7i4/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.560+_adj1.000_sup.biclique.rowmapped.0.380_mergetype1_graphmined.output k=7 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique7.R
+python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass7i5/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.580+_adj0.500_sup.biclique.rowmapped.0.400_mergetype1_graphmined.output.1981.803.remapout k=7 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique7.R
+
+python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass8i3/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.530+_adj0.500_sup.biclique.rowmapped.0.400_mergetype1_graphmined.output.2542.1100.remapout k=8 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique8.R
+
+python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass9i4/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.460+_adj0.500_sup.biclique.rowmapped.0.380_mergetype1_graphmined.output.3140.1481.remapout k=9 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique9.R
+
+python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass10i2/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.400+_adj0.500_sup.biclique.rowmapped.0.280_mergetype1_graphmined.output.4131.2014.remapout k=10 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique10.R
 """
 from __future__ import division
 import sys
