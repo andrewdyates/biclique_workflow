@@ -1,6 +1,7 @@
 #ifndef __TRANSACTION_SET_HH
 #define __TRANSACTION_SET_HH
 
+#include <cstdint>
 #include <iostream>
 #include <vector>
 

@@ -1,4 +1,4 @@
-CFLAGS=-Wall -O3
+CFLAGS=-Wall -O3 -std=gnu++0x
 
 MBC: bin/MBC
 
@@ -9,4 +9,4 @@ bin/MBC: .obj/MBC.o .obj/PTNode.o .obj/TreeWriter.o .obj/BitDb.o .obj/Itemset.o 
 	g++ $(CFLAGS) $< -c -o $@
 
 clean:
-	rm -f .obj/*.o bin/MBC
+	rm -rf .obj/*.o bin/MBC

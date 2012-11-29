@@ -1,6 +1,10 @@
 #ifndef _GRAPH_H
 #define _GRAPH_H
 
+#include <limits>
+#include <stdio.h>
+#include <string.h>
+#include <cstdint>
 #include <iostream>
 #include <fstream>
 #include <sstream>

@@ -1,6 +1,7 @@
 #ifndef __MBC_STATIC_HH
 #define __MBC_STATIC_HH
 
+#include <cstdint>
 #include "Itemset.hh"
 #include "Transactionset.hh"
 

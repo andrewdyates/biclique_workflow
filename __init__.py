@@ -7,10 +7,9 @@ from matrix_to_adjacency import *
 from mafia_bicliques import *
 import subprocess
 
-
-# add time and mpiexec prefixes in CMD call
-# e.g., mpiexec -npernode %d time %s
 MAFIA_CMD = "%(exe)s -fci %(support).4f -ascii %(in_fname)s %(out_fname)s"
+# Usage: ./MBC fi|fci|mfi dataset support biclique_outputfile force_symmetric(0 No, 1 Yes) [minMBCwidth=1] 
+#   fi => (normal) frequent itemsets, fci => frequent closed itemsets, mfi => maximal frequent itemsets
 MBC_CMD = "%(exe)s fci %(adj_fname)s %(support).2f %(out_fname)s 0"
 GRAPH_MINING_CMD = "%(exe)s -g 2 -d %(density).4f -m %(merge_type)d -p %(out_fname)s %(graph_fname)s %(biclique_fname)s"
 

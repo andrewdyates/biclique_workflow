@@ -1,6 +1,7 @@
 #ifndef __ITEMSET_HH
 #define __ITEMSET_HH
 
+#include <cstdint>
 #include <iostream>
 #include <vector>
 

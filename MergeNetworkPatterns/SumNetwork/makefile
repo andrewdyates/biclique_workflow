@@ -1,4 +1,4 @@
-CFLAGS=-Wall -O3
+CFLAGS=-Wall -O3 -std=gnu++0x
 
 GraphMining: bin/GraphMining
 

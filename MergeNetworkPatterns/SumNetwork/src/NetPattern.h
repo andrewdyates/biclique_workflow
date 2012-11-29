@@ -1,6 +1,10 @@
 #ifndef _NETPATTERN_H
 #define _NETPATTERN_H
 
+#include <limits>
+#include <stdio.h>
+#include <string.h>
+#include <cstdint>
 #include <iostream>
 #include <fstream>
 #include <sstream>
