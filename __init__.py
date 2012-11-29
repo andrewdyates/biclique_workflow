@@ -7,16 +7,35 @@ from matrix_to_adjacency import *
 from mafia_bicliques import *
 import subprocess
 
+# FROM: http://himalaya-tools.sourceforge.net/Mafia/
+# Usage: ./mafia [-mfi/-fci/-fi] [min sup (percent)] 
+# 	[-ascii/-binary] [input filename] 
+# 	[output filename (optional)]
+# Ex: ./mafia -mfi .5 -ascii connect4.ascii mfi.txt
+# Ex: ./mafia -mfi .3 -binary chess.binary
 MAFIA_CMD = "%(exe)s -fci %(support).4f -ascii %(in_fname)s %(out_fname)s"
 # Usage: ./MBC fi|fci|mfi dataset support biclique_outputfile force_symmetric(0 No, 1 Yes) [minMBCwidth=1] 
 #   fi => (normal) frequent itemsets, fci => frequent closed itemsets, mfi => maximal frequent itemsets
 MBC_CMD = "%(exe)s fci %(adj_fname)s %(support).2f %(out_fname)s 0"
+# Usage:
+# 	GraphMining [-h] [-g graph_input_format] [-d density] [-m merge_method] [-b batch_size] [-p output_patternfile] [-t tree_file] [-n num_clusters]input_graphfile input_patternfile 
+# Description:
+# 	-h	Print the help message.
+# 	-g	graph_input_format. default value 0 (simple adjacent list); range graph_input_format={0,1,2}. (1: adjacency list for pathtree; 2: matrix)
+# 	-d	density. default value -1 (invalid); range 0<density<=1
+# 	-m	merge_method. default value 0 (S_MERGE); range merge_method={0,1}
+# 	-b	batch_size. default value 10000; range batch_size>=100
+# 	-p	output_patternfile. default none.
+# 	-t	tree_file. default none.
+# 	-n	num_clusters. default 3; The number of clusters for output when building the hierachical tree; range={1,2,3,4,5,6,7,8}.
+# 	input_graphfile	The graph file.
+# 	input_patternfile	The pattern file.
 GRAPH_MINING_CMD = "%(exe)s -g 2 -d %(density).4f -m %(merge_type)d -p %(out_fname)s %(graph_fname)s %(biclique_fname)s"
 
 THIS_DIR = os.path.abspath(os.path.dirname(__file__))
 PATHS = {
   "GraphMining": os.path.join(THIS_DIR, "MergeNetPackage/SumNetwork/bin/GraphMining"),
-  "GraphVis": os.path.join(THIS_DIR, "MergeNetPackage/SumNetwork/bin/GraphVis"),
+#  "GraphVis": os.path.join(THIS_DIR, "MergeNetPackage/SumNetwork/bin/GraphVis"),
   "mafia": os.path.join(THIS_DIR, "MergeNetPackage/MAFIA-MBC/bin/mafia"),
   "MBC": os.path.join(THIS_DIR, "MergeNetPackage/MAFIA-MBC/bin/MBC"),
   "MAFIA-MBC": os.path.join(THIS_DIR, "MergeNetPackage/MAFIA-MBC"),
