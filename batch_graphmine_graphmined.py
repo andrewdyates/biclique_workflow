@@ -17,8 +17,9 @@ SAMPLE GRAPHMERGE INPUT
 20332 15237 23511 2439 ; 3587 3332 3466 4747 2070
 
 """
-import os, re, subprocess, sys
+import os, subprocess, sys
 import cPickle as pickle
+import numpy as np
 
 MERGEFILES = {
 1: "/nfs/01/osu6683/net/gse15745_nov2/bicliques/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.740+_adj2.000_sup.biclique.rowmapped.0.650_mergetype1_graphmined.output",
@@ -46,8 +47,8 @@ def filter_bad(D, rows, cols, t):
     cols: [int] of indices, from 1
     t: dcor mean threshold
   """
-  r = np.array(row)-1
-  c = np.array(col)-1
+  r = np.array(rows)-1
+  c = np.array(cols)-1
   DD = D[r,c]
   ru = np.mean(DD,0)
   cu = np.mean(DD,1)
