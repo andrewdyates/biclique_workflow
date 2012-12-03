@@ -26,7 +26,6 @@ from __future__ import division
 # Install from http://pypi.python.org/pypi/HeapDict
 from heapdict import heapdict
 import sys
-import numpy as np
 import cPickle as pickle
 import merge_graphmine_graphmined
 
@@ -45,10 +44,10 @@ def main(fname, overlap=.60, k=1, n_rows=24334, n_cols=10277, d_fname=None, dcor
     # Filter non-contributing rows and columns
     if d_fname:
       s,t = len(r),len(c)
-      rf, cf = filter_bad(D, r, c, dcor_thresh)
-      r, c = set(rf, cf)
+      rf, cf = merge_graphmine_graphmined.filter_bad(D, r, c, dcor_thresh)
+      r, c = set(rf), set(cf)
       sys.stderr.write("Filtered %d rows, %d columns from unmerged biclique %d.\n" % \
-          (s-len(r), t-len(c), i)
+          (s-len(r), t-len(c), i))
     rows.append(r); cols.append(c)
     all_rows.update(r); all_cols.update(c)
   assert len(rows) == len(cols)
@@ -63,6 +62,7 @@ def main(fname, overlap=.60, k=1, n_rows=24334, n_cols=10277, d_fname=None, dcor
   for i, bc in enumerate(merged):
     print "bc%s.%d.row<-c(%s)" % (k, i, ",".join(map(str, sorted(bc[0]))))
     print "bc%s.%d.col<-c(%s)" % (k, i, ",".join(map(str, sorted(bc[1]))))
+  return merged
 
 
 def merge_bicliques(bicliques, max_overlap=.55):
