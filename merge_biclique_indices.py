@@ -20,7 +20,9 @@ python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/g
 
 python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=~/density_merge_bicliques/Graphmined.rowmapped.manual_mmm_0.5000_1.output k=best n_rows=24334 n_cols=10277 overlap=0.65 > bicliques_t.5_o.65_areamerge.R
 
-TODO: run for most recent bicliques
+python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=~/density_merge_bicliques/revised_dec3/Graphmined.dcor_u0.080rowmapped.mmm_0.4500_1.output k=best n_rows=24334 n_cols=10277 overlap=0.55 d_fname=/fs/lustre/osu6683/gse15745_nov2/dependency_dispatch/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values.pkl dcor_thresh=0.16
+
+TODO: add plotting
 """
 from __future__ import division
 # Install from http://pypi.python.org/pypi/HeapDict
@@ -31,7 +33,9 @@ import merge_graphmine_graphmined
 
 def main(fname, overlap=.60, k=1, n_rows=24334, n_cols=10277, d_fname=None, dcor_thresh=0.08):
   if d_fname:
+    print "Loading %s..." % d_fname
     D = pickle.load(open(d_fname))
+    print "Matrix loaded."
   dcor_thresh = float(dcor_thresh)
   rows, cols = [], []
   overlap = float(overlap); assert overlap >= 0 and overlap <= 1
@@ -44,7 +48,7 @@ def main(fname, overlap=.60, k=1, n_rows=24334, n_cols=10277, d_fname=None, dcor
     # Filter non-contributing rows and columns
     if d_fname:
       s,t = len(r),len(c)
-      rf, cf = merge_graphmine_graphmined.filter_bad(D, r, c, dcor_thresh)
+      rf, cf = merge_graphmine_graphmined.filter_bad(D, list(r), list(c), dcor_thresh)
       r, c = set(rf), set(cf)
       sys.stderr.write("Filtered %d rows, %d columns from unmerged biclique %d.\n" % \
           (s-len(r), t-len(c), i))
