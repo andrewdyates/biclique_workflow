@@ -37,9 +37,9 @@ def main(fname, overlap=.60, k=1, n_rows=24334, n_cols=10277):
   n_rows, n_cols = int(n_rows), int(n_cols)
   all_rows, all_cols = set(), set()
   for line in open(fname):
-    r,c,d = [s.split(' ') for s in line.split(' ; ')]
-    r = set(filter(lambda x: x<=n_rows, map(int, r)))
-    c = set(filter(lambda x: x<=n_cols, map(int, c)))
+    r,c,d = (s.split(' ') for s in line.split(' ; '))
+    r = filter(lambda x:  x<=n_rows, map(int, r)); r=set(r)
+    c = filter(lambda x: x<=n_cols, map(int, c)); c=set(c)
     rows.append(r); cols.append(c)
     all_rows.update(r); all_cols.update(c)
 
@@ -85,7 +85,7 @@ def merge_bicliques(bicliques, max_overlap=.55):
   for i in B:
     for j in filter(lambda j:j>i, B):
       # higher percentage overlap is lower "priority"
-      D[sorted(i,j)] -overlap(B[i], B[j])
+      D[sorted(i,j)] = -get_overlap(B[i], B[j])
 
   # Merge top pair while it is above threshold
   pair, overlap = D.popitem()
@@ -95,7 +95,7 @@ def merge_bicliques(bicliques, max_overlap=.55):
     del B[j]
     # Update all distances including i, delete those with j
     for k in filter(lambda k:k!=i and k!=j, B):
-      D[sorted(i,k)] = -overlap(B[i], B[k])  # distance to merged biclique i
+      D[sorted(i,k)] = -get_overlap(B[i], B[k])  # distance to merged biclique i
       del D[sorted(j,k)]  # biclique j no longer exists
     pair, overlap = D.popitem()  # get next pair
   return B.values()
