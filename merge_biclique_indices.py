@@ -8,40 +8,47 @@ For each pair:
 - A*pct >= I or B*pct >= I, merge
 - repeat in loop until convergence
 
+If given a dependency matrix, filter non-contributing rows and columns.
+
 Requires HeapDict 1.0.0:
   http://pypi.python.org/pypi/HeapDict
 
 
 EXAMPLES:
 
-python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=/nfs/01/osu6683/net/gse15745_nov2/bicliques_pass5i3/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.670+_adj0.500_sup.biclique.rowmapped.0.480_mergetype1_graphmined.output.1081.378.remapout k=5 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique5.R
-
-python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass6i3/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.630+_adj0.500_sup.biclique.rowmapped.0.380_mergetype1_graphmined.output.1380.532.remapout k=6 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique6.R
-
-python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass7i5/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.580+_adj0.500_sup.biclique.rowmapped.0.400_mergetype1_graphmined.output.1981.803.remapout k=7 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique7.R
-
-python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass8i3/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.530+_adj0.500_sup.biclique.rowmapped.0.400_mergetype1_graphmined.output.2542.1100.remapout k=8 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique8.R
-
-python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass9i4/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.460+_adj0.500_sup.biclique.rowmapped.0.380_mergetype1_graphmined.output.3140.1481.remapout k=9 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique9.R
-
 python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass10i2/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.400+_adj0.500_sup.biclique.rowmapped.0.280_mergetype1_graphmined.output.4131.2014.remapout k=10 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique10.R
 
 python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=~/density_merge_bicliques/Graphmined.rowmapped.manual_mmm_0.5000_1.output k=best n_rows=24334 n_cols=10277 overlap=0.65 > bicliques_t.5_o.65_areamerge.R
+
+TODO: run for most recent bicliques
 """
 from __future__ import division
 # Install from http://pypi.python.org/pypi/HeapDict
 from heapdict import heapdict
 import sys
+import numpy as np
+import cPickle as pickle
+import merge_graphmine_graphmined
 
-def main(fname, overlap=.60, k=1, n_rows=24334, n_cols=10277):
+def main(fname, overlap=.60, k=1, n_rows=24334, n_cols=10277, d_fname=None, dcor_thresh=0.08):
+  if d_fname:
+    D = pickle.load(open(d_fname))
+  dcor_thresh = float(dcor_thresh)
   rows, cols = [], []
   overlap = float(overlap); assert overlap >= 0 and overlap <= 1
   n_rows, n_cols = int(n_rows), int(n_cols)
   all_rows, all_cols = set(), set()
-  for line in open(fname):
+  for i, line in enumerate(open(fname)):
     r,c,d = (s.split(' ') for s in line.split(' ; '))
     r = filter(lambda x:  x<=n_rows, map(int, r)); r=set(r)
     c = filter(lambda x: x<=n_cols, map(int, c)); c=set(c)
+    # Filter non-contributing rows and columns
+    if d_fname:
+      s,t = len(r),len(c)
+      rf, cf = filter_bad(D, r, c, dcor_thresh)
+      r, c = set(rf, cf)
+      sys.stderr.write("Filtered %d rows, %d columns from unmerged biclique %d.\n" % \
+          (s-len(r), t-len(c), i)
     rows.append(r); cols.append(c)
     all_rows.update(r); all_cols.update(c)
   assert len(rows) == len(cols)
