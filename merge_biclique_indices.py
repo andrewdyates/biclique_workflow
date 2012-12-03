@@ -25,6 +25,8 @@ python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/g
 python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass9i4/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.460+_adj0.500_sup.biclique.rowmapped.0.380_mergetype1_graphmined.output.3140.1481.remapout k=9 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique9.R
 
 python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=$HOME/net/gse15745_nov2/bicliques_pass10i2/Methyl-correct-aligned.pkl_mRNA-correct-aligned.pkl.DCOR.values_0.400+_adj0.500_sup.biclique.rowmapped.0.280_mergetype1_graphmined.output.4131.2014.remapout k=10 n_rows=24334 n_cols=10277 > $HOME/gse15745_nov2012_experiments/bicliques/biclique10.R
+
+python $HOME/pymod/biclique_workflow/merge_biclique_indices.py fname=~/density_merge_bicliques/Graphmined.rowmapped.manual_mmm_0.5000_1.output k=best n_rows=24334 n_cols=10277 overlap=0.65 > bicliques_t.5_o.65_areamerge.R
 """
 from __future__ import division
 # Install from http://pypi.python.org/pypi/HeapDict
@@ -42,28 +44,18 @@ def main(fname, overlap=.60, k=1, n_rows=24334, n_cols=10277):
     c = filter(lambda x: x<=n_cols, map(int, c)); c=set(c)
     rows.append(r); cols.append(c)
     all_rows.update(r); all_cols.update(c)
-
-  n = len(rows)
-  overlaps, merged = set(), set()
-  for i in xrange(n):
-    if i in overlaps: continue
-    merged.add(i)
-    for j in xrange(i,n):
-      qr, qc = rows[i] & rows[j], cols[i] & cols[j]
-      if (len(qr)/len(rows[i]) >= overlap and len(qc)/len(cols[i]) >= overlap) or \
-            (len(qr)/len(rows[j]) >= overlap and len(qc)/len(cols[j]) >= overlap):
-        rows[i] = rows[i] | rows[j]
-        cols[i] = cols[i] | cols[j]
-        overlaps.add(j)
+  assert len(rows) == len(cols)
+  bicliques = zip(rows, cols)
+  merged = merge_bicliques(bicliques, overlap)
 
   print "# Biclique Set %s Generated from %s" % (k, fname)
-  print "# %d to %d bicliques, overlap by %f" % (n, len(merged), overlap)
+  print "# %d to %d bicliques, overlap by %f" % (len(bicliques), len(merged), overlap)
   print "# %d unique rows, %d unique columns" % (len(all_rows), len(all_cols))
   print "#rows: ", ",".join(map(str, sorted(all_rows)))
   print "#cols: ", ",".join(map(str, sorted(all_cols)))
-  for i, x in enumerate(merged):
-    print "bc%s.%d.row<-c(%s)" % (k, i, ",".join(map(str, sorted(rows[x]))))
-    print "bc%s.%d.col<-c(%s)" % (k, i, ",".join(map(str, sorted(cols[x]))))
+  for i, bc in enumerate(merged):
+    print "bc%s.%d.row<-c(%s)" % (k, i, ",".join(map(str, sorted(bc[0]))))
+    print "bc%s.%d.col<-c(%s)" % (k, i, ",".join(map(str, sorted(bc[1]))))
 
 
 def merge_bicliques(bicliques, max_overlap=.55):
@@ -85,7 +77,7 @@ def merge_bicliques(bicliques, max_overlap=.55):
   for i in B:
     for j in filter(lambda j:j>i, B):
       # higher percentage overlap is lower "priority"
-      D[sorted(i,j)] = -get_overlap(B[i], B[j])
+      D[tuple(sorted((i,j)))] = -get_overlap(B[i], B[j])
 
   # Merge top pair while it is above threshold
   pair, overlap = D.popitem()
@@ -95,12 +87,15 @@ def merge_bicliques(bicliques, max_overlap=.55):
     del B[j]
     # Update all distances including i, delete those with j
     for k in filter(lambda k:k!=i and k!=j, B):
-      D[sorted(i,k)] = -get_overlap(B[i], B[k])  # distance to merged biclique i
-      del D[sorted(j,k)]  # biclique j no longer exists
-    pair, overlap = D.popitem()  # get next pair
+      D[tuple(sorted((i,k)))] = -get_overlap(B[i], B[k])  # distance to merged biclique i
+      del D[tuple(sorted((j,k)))]  # biclique j no longer exists
+    if len(D):
+      pair, overlap = D.popitem()  # get next pair
+    else:
+      break
   return B.values()
 
-def overlap(a, b):
+def get_overlap(a, b):
   """Compute overlap between bicliques a and b; biclique = ([rows],[cols])."""
   area_i = len(a[0])*len(a[1])
   area_j = len(b[0])*len(b[1])
