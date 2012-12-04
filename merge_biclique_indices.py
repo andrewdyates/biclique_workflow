@@ -33,9 +33,9 @@ import merge_graphmine_graphmined
 
 def main(fname, overlap=.60, k=1, n_rows=24334, n_cols=10277, d_fname=None, dcor_thresh=0.08):
   if d_fname:
-    print "Loading %s..." % d_fname
+    sys.stderr.write("Loading %s...\n" % d_fname)
     D = pickle.load(open(d_fname))
-    print "Matrix loaded."
+    sys.stderr.write("Matrix loaded.\n")
   dcor_thresh = float(dcor_thresh)
   rows, cols = [], []
   overlap = float(overlap); assert overlap >= 0 and overlap <= 1
